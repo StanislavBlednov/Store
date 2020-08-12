@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/storeFrontFragment"
+        android:icon="@drawable/ic_store"
+        android:title="@string/store_front"/>
+    <item
+        android:id="@+id/backEndFragment"
+        android:icon="@drawable/ic_storage"
+        android:title="@string/back_end"/>
+</menu>

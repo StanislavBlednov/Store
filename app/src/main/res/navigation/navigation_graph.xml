@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation_graph"
+    app:startDestination="@id/storeFrontFragment">
+
+    <fragment
+        android:id="@+id/storeFrontFragment"
+        android:name="com.example.store.ui.fragments.StoreFrontFragment"
+        android:label="Store"
+        tools:layout="@layout/fragment_store_front" />
+    <fragment
+        android:id="@+id/backEndFragment"
+        android:name="com.example.store.ui.fragments.BackEndFragment"
+        android:label="Storage"
+        tools:layout="@layout/fragment_back_end" />
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.example.store.ui.fragments.ProductDetailFragment"
+        android:label="fragment_product_detail"
+        tools:layout="@layout/fragment_product_detail" >
+    </fragment>
+</navigation>

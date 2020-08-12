@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="32dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/itemStoreFront__name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="26sp"
+        tools:text="Lenovo G580"
+        android:padding="16dp"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/itemStoreFront__price"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/itemStoreFront__price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/price"
+        android:padding="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/itemStoreFront__amount"
+        app:layout_constraintTop_toBottomOf="@id/itemStoreFront__name"/>
+
+    <TextView
+        android:id="@+id/itemStoreFront__value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        tools:text="8922 руб."
+        android:padding="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/itemStoreFront__price"/>
+
+    <TextView
+        android:id="@+id/itemStoreFront__amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/amount"
+        android:padding="16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/itemStoreFront__buttonBuy"
+        app:layout_constraintTop_toBottomOf="@id/itemStoreFront__price"/>
+
+    <TextView
+        android:id="@+id/itemStoreFront__pcs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        tools:text="1 шт."
+        android:padding="16dp"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBaseline_toBaselineOf="@id/itemStoreFront__amount"/>
+
+    <Button
+        android:id="@+id/itemStoreFront__buttonBuy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_buy"
+        android:textSize="20sp"
+        android:textAllCaps="false"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:layout_marginTop="80dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/itemStoreFront__amount"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

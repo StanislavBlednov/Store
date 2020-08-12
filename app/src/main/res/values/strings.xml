@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Store</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="store_front">Store-Front</string>
+    <string name="back_end">Back-End</string>
+    <string name="price">Цена</string>
+    <string name="amount">Количество</string>
+    <string name="button_buy">Купить</string>
+    <string name="product_name">Название</string>
+</resources>
