@@ -8,7 +8,7 @@
         <import type="android.view.View"/>
         <variable
             name="mainModel"
-            type="com.example.store.viewModels.MainActivityViewModel" />
+            type="com.example.store.ui.MainActivityViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

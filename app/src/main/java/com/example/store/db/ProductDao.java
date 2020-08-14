@@ -20,12 +20,8 @@ public interface ProductDao {
     Completable insert(Iterable<Product> products);
     @Update
     Completable update(Product product);
-    @Update
-    Completable update(Iterable<Product> products);
     @Delete
     Completable delete(Product product);
-    @Delete
-    Completable delete(Iterable<Product> products);
     @Query("DELETE FROM products")
     Completable deleteAll();
     @Query("SELECT * FROM products WHERE name = :name")
@@ -33,7 +29,7 @@ public interface ProductDao {
     @Query("SELECT * FROM products WHERE id = :id")
     Maybe<Product> getProductById(long id);
     @Query("SELECT * FROM products")
-    Observable<List<Product>> getAllProducts();
+    Single<List<Product>> getAllProducts();
     @Query("SELECT * FROM products LIMIT 20 OFFSET :page")
     Observable<List<Product>> getProductsFromPage(int page);
 }

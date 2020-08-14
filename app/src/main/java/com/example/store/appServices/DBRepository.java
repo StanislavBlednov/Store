@@ -1,6 +1,7 @@
 package com.example.store.appServices;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.example.store.db.Product;
 import com.example.store.db.ProductDao;
@@ -8,13 +9,13 @@ import com.example.store.db.StoreDatabase;
 import com.example.store.utils.Clear;
 
 import androidx.room.Room;
-import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 
 public class DBRepository implements DBService, Clear {
+    private static final String TAG = "DBRepository";
     private final ProductDao productDao;
     private PublishSubject<Product> insertChanges;
     private PublishSubject<Product> updateChanges;
@@ -29,28 +30,27 @@ public class DBRepository implements DBService, Clear {
 
     @Override
     public void insert(Product product) {
-        if (insertChanges != null) insertChanges.onNext(product);
         disposables.add(
                 productDao.insert(product)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
+                        .subscribe(() -> {
+                            if (insertChanges != null) insertChanges.onNext(product);
+                        }, e -> Log.e(TAG, "insert: " + e.getMessage()))
         );
     }
 
     @Override
     public void insert(Iterable<Product> products) {
-        if (insertChanges != null) {
-            disposables.add(
-                    Observable.fromIterable(products)
-                            .subscribe(product -> insertChanges.onNext(product))
-            );
-        }
         disposables.add(
                 productDao.insert(products)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
+                        .subscribe(() -> {
+                            if (insertChanges != null) {
+                                for (Product product: products) insertChanges.onNext(product);
+                            }
+                        }, e -> Log.e(TAG, "insert list:" + e.getMessage()))
         );
     }
 
@@ -60,23 +60,9 @@ public class DBRepository implements DBService, Clear {
                 productDao.update(product)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
-        );
-    }
-
-    @Override
-    public void update(Iterable<Product> products) {
-        if (updateChanges != null) {
-            disposables.add(
-                    Observable.fromIterable(products)
-                            .subscribe(product -> updateChanges.onNext(product))
-            );
-        }
-        disposables.add(
-                productDao.update(products)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
+                        .subscribe(() -> {
+                            if (updateChanges != null) updateChanges.onNext(product);
+                        }, e -> Log.e(TAG, "update: " + e.getMessage()))
         );
     }
 
@@ -86,23 +72,9 @@ public class DBRepository implements DBService, Clear {
                 productDao.delete(product)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
-        );
-    }
-
-    @Override
-    public void delete(Iterable<Product> products) {
-        if (deleteChanges != null) {
-            disposables.add(
-                    Observable.fromIterable(products)
-                            .subscribe(product -> deleteChanges.onNext(product))
-            );
-        }
-        disposables.add(
-                productDao.delete(products)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
+                        .subscribe(() -> {
+                            if (deleteChanges != null) deleteChanges.onNext(product);
+                        }, e -> Log.e(TAG, "delete: " + e.getMessage()))
         );
     }
 
@@ -112,7 +84,7 @@ public class DBRepository implements DBService, Clear {
                 productDao.deleteAll()
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe()
+                        .subscribe(() -> {}, e -> Log.e(TAG, "deleteAll: " + e.getMessage()))
         );
     }
 

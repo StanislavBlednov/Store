@@ -9,11 +9,15 @@ import com.example.store.appServices.AppServices;
 import com.example.store.appServices.DBRepository;
 import com.example.store.appServices.DBService;
 import com.example.store.appServices.NavigationService;
+import com.example.store.data.CsvToProductParser;
+import com.example.store.data.DataLoader;
 
 public class App extends Application implements AppServices {
     private AnimationService animationService;
     private NavigationService navigationService;
     private DBRepository dbRepository;
+    private DataLoader loader;
+
 
     @Override
     public AnimationService getAppAnimations() {
@@ -37,6 +41,12 @@ public class App extends Application implements AppServices {
             dbRepository = new DBRepository(getApplicationContext());
         }
         return dbRepository;
+    }
+
+    @Override
+    public DataLoader getLoader() {
+        if (loader == null) loader = new CsvToProductParser(getResources());
+        return loader;
     }
 
     @Override

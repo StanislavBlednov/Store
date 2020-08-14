@@ -6,4 +6,5 @@
     <string name="amount">Количество</string>
     <string name="button_buy">Купить</string>
     <string name="product_name">Название</string>
+    <string name="forward">Forward</string>
 </resources>

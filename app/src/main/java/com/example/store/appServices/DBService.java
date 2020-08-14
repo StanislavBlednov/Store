@@ -9,9 +9,7 @@ public interface DBService {
     void insert(Product product);
     void insert(Iterable<Product> products);
     void update(Product product);
-    void update(Iterable<Product> products);
     void delete(Product product);
-    void delete(Iterable<Product> products);
     void deleteAll();
     ProductDao dao();
     PublishSubject<Product> insertChange();

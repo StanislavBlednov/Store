@@ -7,18 +7,38 @@
 
     <fragment
         android:id="@+id/storeFrontFragment"
-        android:name="com.example.store.ui.fragments.StoreFrontFragment"
+        android:name="com.example.store.ui.fragments.front.StoreFrontFragment"
         android:label="Store"
-        tools:layout="@layout/fragment_store_front" />
+        tools:layout="@layout/fragment_store_front" >
+        <action
+            android:id="@+id/action_storeFrontFragment_to_backEndFragment"
+            app:destination="@id/backEndFragment" />
+    </fragment>
     <fragment
         android:id="@+id/backEndFragment"
-        android:name="com.example.store.ui.fragments.BackEndFragment"
+        android:name="com.example.store.ui.fragments.back.BackEndFragment"
         android:label="Storage"
-        tools:layout="@layout/fragment_back_end" />
+        tools:layout="@layout/fragment_back_end" >
+        <action
+            android:id="@+id/action_backEndFragment_to_storeFrontFragment"
+            app:destination="@id/storeFrontFragment" />
+        <action
+            android:id="@+id/action_backEndFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+        <argument
+            android:name="PRODUCT"
+            app:argType="com.example.store.db.Product" />
+    </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.example.store.ui.fragments.ProductDetailFragment"
-        android:label="fragment_product_detail"
-        tools:layout="@layout/fragment_product_detail" >
+        android:name="com.example.store.ui.fragments.edit.ProductEditFragment"
+        android:label="Edit product"
+        tools:layout="@layout/fragment_product_edit" >
+        <action
+            android:id="@+id/action_productDetailFragment_to_backEndFragment"
+            app:destination="@id/backEndFragment" />
+        <argument
+            android:name="PRODUCT"
+            app:argType="com.example.store.db.Product" />
     </fragment>
 </navigation>

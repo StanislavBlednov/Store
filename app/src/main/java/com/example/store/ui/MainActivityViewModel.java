@@ -1,5 +1,6 @@
-package com.example.store.viewModels;
+package com.example.store.ui;
 
+import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,6 +11,9 @@ import com.example.store.appServices.AnimationService;
 import com.example.store.appServices.NavigationService;
 import com.example.store.utils.Clear;
 import com.example.store.utils.MenuItemVisibility;
+import com.example.store.utils.SaveRestoreState;
+
+import java.util.Objects;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.databinding.BindingAdapter;
@@ -17,13 +21,15 @@ import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import io.reactivex.disposables.Disposable;
 
-public class MainActivityViewModel implements Clear {
+public class MainActivityViewModel implements Clear, SaveRestoreState {
     private static final String TAG = "MainActivityViewModel";
+    private static final String BOTTOM_BAR = "MainActivityBottomBar";
+    private static final String MENU = "MainActivityMenu";
     private final AnimationService animationService;
     private Disposable listener;
-    private ObservableBoolean hideBottomBar = new ObservableBoolean(false);
-    private ObservableField<Animation> animateBottomBar = new ObservableField<>(null);
-    private ObservableField<MenuItemVisibility> menu = new ObservableField<>(null);
+    private ObservableBoolean hideBottomBar = new ObservableBoolean(true);
+    private ObservableField<Animation> animateBottomBar = new ObservableField<>();
+    private ObservableField<MenuItemVisibility> menu = new ObservableField<>();
 
     public MainActivityViewModel(AnimationService animationService, NavigationService navigationService) {
         this.animationService = animationService;
@@ -69,20 +75,22 @@ public class MainActivityViewModel implements Clear {
 
     @BindingAdapter("android:showMenuItem")
     public static void showMenuItem(Toolbar toolbar, MenuItemVisibility item) {
-        if (item != null && toolbar.getMenu() != null) {
-            if (item.getShow().length > 0) {
-                for (int show : item.getShow()) {
-                    MenuItem menuItem = toolbar.getMenu().findItem(show);
-                    if(menuItem != null) menuItem.setVisible(true);
+        toolbar.post(() -> {
+            if (item != null && toolbar.getMenu() != null) {
+                if (item.getShow().length > 0) {
+                    for (int show : item.getShow()) {
+                        MenuItem menuItem = toolbar.getMenu().findItem(show);
+                        if (menuItem != null) menuItem.setVisible(true);
+                    }
+                }
+                if (item.getHide().length > 0) {
+                    for (int hide : item.getHide()) {
+                        MenuItem menuItem = toolbar.getMenu().findItem(hide);
+                        if (menuItem != null) menuItem.setVisible(false);
+                    }
                 }
             }
-            if (item.getHide().length > 0) {
-                for (int hide : item.getHide()) {
-                    MenuItem menuItem = toolbar.getMenu().findItem(hide);
-                    if (menuItem != null) menuItem.setVisible(false);
-                }
-            }
-        }
+        });
     }
 
     @BindingAdapter("android:animate")
@@ -102,5 +110,21 @@ public class MainActivityViewModel implements Clear {
 
     public ObservableField<MenuItemVisibility> getMenu() {
         return menu;
+    }
+
+    @Override
+    public void save(Bundle bundle) {
+        if (bundle != null){
+            bundle.putBoolean(BOTTOM_BAR, hideBottomBar.get());
+            bundle.putString(MENU, Objects.requireNonNull(menu.get()).name());
+        }
+    }
+
+    @Override
+    public void restore(Bundle bundle) {
+        if (bundle != null){
+            hideBottomBar.set(bundle.getBoolean(BOTTOM_BAR));
+            menu.set(MenuItemVisibility.valueOf(bundle.getString(MENU)));
+        }
     }
 }
