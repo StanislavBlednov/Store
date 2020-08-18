@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.store.R;
-import com.example.store.appServices.DBService;
+import com.example.store.appServices.ProductRepository;
 import com.example.store.data.DataLoader;
 import com.example.store.db.Product;
 import com.example.store.utils.Clear;
@@ -26,13 +26,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public class BackEndAdapter extends RecyclerView.Adapter<BackEndAdapter.BackEndHolder> implements Clear {
     private static final String TAG = "BackEndAdapter";
-    private DBService dbService;
+    private ProductRepository productRepo;
     private List<Product> productList;
     private CompositeDisposable disposables;
     private Click click;
 
-    public BackEndAdapter(DBService dbService, DataLoader loader, Click click) {
-        this.dbService = dbService;
+    public BackEndAdapter(ProductRepository productRepo, DataLoader loader, Click click) {
+        this.productRepo = productRepo;
         this.click = click;
         disposables = new CompositeDisposable();
 
@@ -40,22 +40,22 @@ public class BackEndAdapter extends RecyclerView.Adapter<BackEndAdapter.BackEndH
 
         // track insert product
         disposables.add(
-                dbService.insertChange()
+                productRepo.insertChange()
                         .subscribe(this::insert, e -> Log.e(TAG, "insertChange: " + e.getMessage()))
         );
         // track update product
         disposables.add(
-                dbService.updateChange()
+                productRepo.updateChange()
                         .subscribe(this::update, e -> Log.e(TAG, "insertChange: " + e.getMessage()))
         );
         // track delete product
         disposables.add(
-                dbService.deleteChange()
+                productRepo.deleteChange()
                         .subscribe(this::delete, e -> Log.e(TAG, "insertChange: " + e.getMessage()))
         );
         // initialization products list
         disposables.add(
-                dbService.dao()
+                productRepo.dao()
                         .getAllProducts()
                         .flatMap(p -> !p.isEmpty() ? Single.just(p) : Single.error(new Throwable("Empty db")))
                         .onErrorResumeNext(t -> {
@@ -64,7 +64,7 @@ public class BackEndAdapter extends RecyclerView.Adapter<BackEndAdapter.BackEndH
                                         loader.getProducts()
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe(dbService::insert, e -> Log.e(TAG, "load date: " + e.getMessage()))
+                                                .subscribe(productRepo::insert, e -> Log.e(TAG, "load date: " + e.getMessage()))
                                 );
                                 return Single.just(new ArrayList<>());
                             } else {
@@ -124,6 +124,13 @@ public class BackEndAdapter extends RecyclerView.Adapter<BackEndAdapter.BackEndH
             if (adapterPosition != RecyclerView.NO_POSITION) {
                 click.edit(productList.get(adapterPosition));
             }
+        });
+        view.setOnLongClickListener(v -> {
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                productRepo.delete(productList.get(adapterPosition));
+            }
+            return true;
         });
         return holder;
     }

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="model"
+            type="com.example.store.ui.fragments.edit.EditProductViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        tools:context=".ui.fragments.edit.EditProductFragment">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editProduct__name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:error_text="@{model.errorName}"
+            app:errorEnabled="@{model.nameErrorEnable}"
+            app:layout_constraintBottom_toTopOf="@id/editProduct__price"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editProduct__editName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/NormalText"
+                android:hint="@string/product_name"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:text="@={model.name}"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editProduct__price"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:error_text="@{model.errorPrice}"
+            app:errorEnabled="@{model.priceErrorEnable}"
+            app:layout_constraintBottom_toTopOf="@id/editProduct__amount"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editProduct__name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editProduct__editPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/NormalText"
+                android:hint="@string/price"
+                android:imeOptions="actionNext"
+                android:inputType="numberDecimal"
+                android:text="@={model.price}"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/editProduct__amount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:visibility="@{model.showAmountInput ? View.VISIBLE : View.GONE}"
+            android:error_text="@{model.errorPcs}"
+            app:errorEnabled="@{model.pcsErrorEnable}"
+            app:layout_constraintBottom_toTopOf="@id/editProduct__amountLabel"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editProduct__price">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editProduct__editAmount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/amount"
+                android:theme="@style/NormalText"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:text="@={model.pcs}"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/editProduct__amountLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="@string/amount"
+            android:visibility="@{model.showAmountInput ? View.GONE : View.VISIBLE}"
+            style="@style/NormalText"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editProduct__amount"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/editProduct__addPcs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add_circle"
+            android:theme="@style/AppTheme.ImageButton"
+            android:visibility="@{model.showAmountInput ? View.GONE : View.VISIBLE}"
+            android:onClick="@{model.click}"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@id/editProduct__amountLabel"
+            app:layout_constraintBottom_toBottomOf="@id/editProduct__amountLabel"
+            android:contentDescription="@string/add" />
+
+        <TextView
+            android:id="@+id/editProduct__pcs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:text="@{model.pcs}"
+            tools:text="10"
+            style="@style/NormalText"
+            android:visibility="@{model.showAmountInput ? View.GONE : View.VISIBLE}"
+            app:layout_constraintRight_toLeftOf="@id/editProduct__addPcs"
+            app:layout_constraintTop_toTopOf="@id/editProduct__amountLabel"
+            app:layout_constraintBottom_toBottomOf="@id/editProduct__amountLabel"
+            />
+
+        <ImageButton
+            android:id="@+id/editProduct__subPcs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_remove_circle"
+            android:theme="@style/AppTheme.ImageButton"
+            android:onClick="@{model.click}"
+            android:visibility="@{model.showAmountInput ? View.GONE : View.VISIBLE}"
+            app:layout_constraintRight_toLeftOf="@id/editProduct__pcs"
+            app:layout_constraintTop_toTopOf="@id/editProduct__amountLabel"
+            app:layout_constraintBottom_toBottomOf="@id/editProduct__amountLabel"
+            android:contentDescription="@string/subtract" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

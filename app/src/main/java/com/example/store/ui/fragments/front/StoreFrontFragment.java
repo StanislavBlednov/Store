@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.PagerSnapHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class StoreFrontFragment extends Fragment {
+    public static final String FRONT_ITEM = "frontItem";
     private static final String POSITION = "StoreFrontFragment";
     private StoreFrontAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -30,7 +31,7 @@ public class StoreFrontFragment extends Fragment {
         if (getActivity() != null) {
             App app = (App) getActivity().getApplication();
 
-            adapter = new StoreFrontAdapter(app.getDb(), app.getLoader());
+            adapter = new StoreFrontAdapter(app.getProductRepo(), app.getLoader());
 
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
 
@@ -43,6 +44,9 @@ public class StoreFrontFragment extends Fragment {
 
             if (savedInstanceState != null) {
                 recyclerView.post(() -> layoutManager.scrollToPosition(savedInstanceState.getInt(POSITION, 0)));
+            } else {
+                int item = app.getPreference().getInt(FRONT_ITEM, 0);
+                if (item > 0) recyclerView.post(() -> layoutManager.scrollToPosition(item));
             }
         }
 
@@ -60,6 +64,11 @@ public class StoreFrontFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        ((App)requireActivity().getApplication())
+                .getPreference()
+                .edit()
+                .putInt(FRONT_ITEM, layoutManager.findLastCompletelyVisibleItemPosition())
+                .apply();
     }
 
     @Override

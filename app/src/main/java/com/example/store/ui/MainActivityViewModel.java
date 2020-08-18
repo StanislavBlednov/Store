@@ -27,7 +27,7 @@ public class MainActivityViewModel implements Clear, SaveRestoreState {
     private static final String MENU = "MainActivityMenu";
     private final AnimationService animationService;
     private Disposable listener;
-    private ObservableBoolean hideBottomBar = new ObservableBoolean(true);
+    private ObservableBoolean hideBottomBar = new ObservableBoolean(false);
     private ObservableField<Animation> animateBottomBar = new ObservableField<>();
     private ObservableField<MenuItemVisibility> menu = new ObservableField<>();
 
@@ -37,7 +37,7 @@ public class MainActivityViewModel implements Clear, SaveRestoreState {
         listener = navigationService.getDestination()
                 .map(id -> {
                     switch (id){
-                        case R.id.productDetailFragment: {
+                        case R.id.editProductFragment: {
                             if (!hideBottomBar.get()) hideBottomBar();
                             menu.set(MenuItemVisibility.SAVE);
                             break;

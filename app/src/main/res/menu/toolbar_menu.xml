@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/toolbarMenu__add"
-        android:icon="@drawable/ic_add_box"
-        android:title="Add"
+        android:icon="@drawable/ic_add"
+        android:title="@string/add_menu"
         app:showAsAction="ifRoom"
         android:visible="false"
         />
     <item
         android:id="@+id/toolbarMenu__save"
         android:icon="@drawable/ic_save"
-        android:title="Save"
+        android:title="@string/save_menu"
         app:showAsAction="ifRoom"
         android:visible="false"
         />

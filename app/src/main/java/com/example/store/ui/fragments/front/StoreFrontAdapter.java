@@ -5,10 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.store.R;
-import com.example.store.appServices.DBService;
+import com.example.store.appServices.ProductRepository;
 import com.example.store.data.DataLoader;
 import com.example.store.db.Product;
 import com.example.store.utils.Clear;
@@ -27,35 +28,35 @@ import io.reactivex.schedulers.Schedulers;
 
 public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.StoreFrontHolder> implements Clear {
     private static final String TAG = "StoreFrontAdapter";
-    private DBService dbService;
+    private ProductRepository productRepo;
     private List<Product> productList;
     private CompositeDisposable disposables;
 
-    public StoreFrontAdapter(DBService dbService, DataLoader loader) {
-        this.dbService = dbService;
+    public StoreFrontAdapter(ProductRepository productRepo, DataLoader loader) {
+        this.productRepo = productRepo;
         disposables = new CompositeDisposable();
 
         productList = new ArrayList<>();
 
         // track insert product
         disposables.add(
-                dbService.insertChange()
+                productRepo.insertChange()
                         .filter(product -> product.getPcs() > 0)
                         .subscribe(this::insert, e -> Log.e(TAG, "insertChange: " + e.getMessage()))
         );
         // track update product
         disposables.add(
-                dbService.updateChange()
-                        .subscribe(this::update, e -> Log.e(TAG, "insertChange: " + e.getMessage()))
+                productRepo.updateChange()
+                        .subscribe(this::update, e -> Log.e(TAG, "updateChange: " + e.getMessage()))
         );
         // track delete product
         disposables.add(
-                dbService.deleteChange()
-                        .subscribe(this::delete, e -> Log.e(TAG, "insertChange: " + e.getMessage()))
+                productRepo.deleteChange()
+                        .subscribe(this::delete, e -> Log.e(TAG, "deleteChange: " + e.getMessage()))
         );
         // initialization products list
         disposables.add(
-                dbService.dao()
+                productRepo.dao()
                         .getAllProducts()
                         .flatMap(p -> !p.isEmpty() ? Single.just(p) : Single.error(new Throwable("Empty db")))
                         .onErrorResumeNext(t -> {
@@ -64,7 +65,7 @@ public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.St
                                         loader.getProducts()
                                                 .subscribeOn(Schedulers.io())
                                                 .observeOn(AndroidSchedulers.mainThread())
-                                                .subscribe(dbService::insert, e -> Log.e(TAG, "load date: " + e.getMessage()))
+                                                .subscribe(productRepo::insert, e -> Log.e(TAG, "load date: " + e.getMessage()))
                                 );
                                 return Single.just(new ArrayList<>());
                             } else {
@@ -76,6 +77,7 @@ public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.St
                         .subscribe(this::insert, e -> Log.e(TAG, "getAll: " + e.getMessage()))
         );
     }
+
     // insert products from db
     private void insert(List<Product> products) {
         if (!products.isEmpty()) {
@@ -89,11 +91,13 @@ public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.St
             );
         }
     }
+
     // refresh insert product
     private void insert(Product product) {
         productList.add(product);
         notifyItemInserted(productList.size() - 1);
     }
+
     // refresh updated product
     private void update(Product product) {
         if (product.getPcs() > 0) {
@@ -108,6 +112,7 @@ public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.St
             delete(product);
         }
     }
+
     // refresh delete product
     private void delete(Product product) {
         int index = productList.indexOf(product);
@@ -140,10 +145,12 @@ public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.St
     }
 
     class StoreFrontHolder extends RecyclerView.ViewHolder {
+        private Product product;
         private TextView name;
         private TextView price;
         private TextView pcs;
         private Button buy;
+        private ProgressBar progress;
 
         public StoreFrontHolder(@NonNull View itemView) {
             super(itemView);
@@ -151,13 +158,23 @@ public class StoreFrontAdapter extends RecyclerView.Adapter<StoreFrontAdapter.St
             price = itemView.findViewById(R.id.itemStoreFront__value);
             pcs = itemView.findViewById(R.id.itemStoreFront__pcs);
             buy = itemView.findViewById(R.id.itemStoreFront__buttonBuy);
+            progress = itemView.findViewById(R.id.itemStoreFront__progress);
         }
 
-        void bind(int position){
-            name.setText(productList.get(position).getName());
+        void bind(int position) {
+            product = productList.get(position);
+            progress.setVisibility(View.GONE);
+            buy.setEnabled(true);
+            name.setText(product.getName());
             NumberFormat formatter = NumberFormat.getNumberInstance();
-            price.setText(String.format("%s руб.", formatter.format(productList.get(position).getPrice())));
-            pcs.setText(String.format("%s шт.", productList.get(position).getPcs()));
+            price.setText(String.format("%s руб.", formatter.format(product.getPrice())));
+            pcs.setText(String.format("%s шт.", product.getPcs()));
+
+            buy.setOnClickListener(v -> {
+                progress.setVisibility(View.VISIBLE);
+                buy.setEnabled(false);
+                productRepo.buy(product);
+            });
         }
     }
 }

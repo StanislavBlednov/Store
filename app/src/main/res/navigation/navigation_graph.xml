@@ -9,36 +9,46 @@
         android:id="@+id/storeFrontFragment"
         android:name="com.example.store.ui.fragments.front.StoreFrontFragment"
         android:label="Store"
-        tools:layout="@layout/fragment_store_front" >
-        <action
-            android:id="@+id/action_storeFrontFragment_to_backEndFragment"
-            app:destination="@id/backEndFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_store_front" />
     <fragment
         android:id="@+id/backEndFragment"
         android:name="com.example.store.ui.fragments.back.BackEndFragment"
         android:label="Storage"
         tools:layout="@layout/fragment_back_end" >
-        <action
-            android:id="@+id/action_backEndFragment_to_storeFrontFragment"
-            app:destination="@id/storeFrontFragment" />
-        <action
-            android:id="@+id/action_backEndFragment_to_productDetailFragment"
-            app:destination="@id/productDetailFragment" />
         <argument
-            android:name="PRODUCT"
+            android:name="product"
             app:argType="com.example.store.db.Product" />
+        <action
+            android:id="@+id/backEndFragmentToEditProductFragment"
+            app:destination="@id/editProductFragment" />
     </fragment>
     <fragment
-        android:id="@+id/productDetailFragment"
-        android:name="com.example.store.ui.fragments.edit.ProductEditFragment"
+        android:id="@+id/editProductFragment"
+        android:name="com.example.store.ui.fragments.edit.EditProductFragment"
         android:label="Edit product"
-        tools:layout="@layout/fragment_product_edit" >
-        <action
-            android:id="@+id/action_productDetailFragment_to_backEndFragment"
-            app:destination="@id/backEndFragment" />
+        tools:layout="@layout/fragment_edit_product" >
         <argument
-            android:name="PRODUCT"
+            android:name="product"
             app:argType="com.example.store.db.Product" />
+        <action
+            android:id="@+id/editProductFragmentToExistNowDialog"
+            app:destination="@id/existNowDialog" />
+        <action
+            android:id="@+id/editProductFragmentToInputAmountDialog"
+            app:destination="@id/inputAmountDialog" />
     </fragment>
+    <dialog
+        android:id="@+id/existNowDialog"
+        android:name="com.example.store.ui.fragments.dialogs.ExistNowDialog" >
+        <argument
+            android:name="productName"
+            app:argType="string" />
+    </dialog>
+    <dialog
+        android:id="@+id/inputAmountDialog"
+        android:name="com.example.store.ui.fragments.dialogs.InputPcsAmountDialog">
+        <argument
+            android:name="operationType"
+            app:argType="string" />
+    </dialog>
 </navigation>

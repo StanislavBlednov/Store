@@ -1,15 +1,13 @@
 package com.example.store.ui;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.example.store.App;
 import com.example.store.R;
+import com.example.store.appServices.ProductSave;
 import com.example.store.databinding.ActivityMainBinding;
-import com.example.store.db.Product;
-import com.example.store.ui.fragments.back.BackEndFragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,7 +17,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TITLE = "MAIN_ACTIVITY_TITLE";
+    private static final String TITLE = "MainActivityTitle";
     private NavController navController;
     private MainActivityViewModel mainModel;
     private NavController.OnDestinationChangedListener listener;
@@ -65,18 +63,21 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.toolbarMenu__add){
-            navController.navigate(R.id.productDetailFragment);
+            navController.navigate(R.id.editProductFragment);
             return super.onOptionsItemSelected(item);
         } else if (item.getItemId() == R.id.toolbarMenu__save) {
-            // TODO: 12.08.2020 save data
-            Product product =
-                    navController.getCurrentBackStackEntry() != null ?
-                            navController.getCurrentBackStackEntry().getArguments() != null ?
-                                    navController.getCurrentBackStackEntry().getArguments().getParcelable(BackEndFragment.PRODUCT) : null : null;
-            if (product != null) {
-                Log.d("TEST",  String.format("save: %s | %s | %f | %d", product.getId(), product.getName(), product.getPrice(), product.getPcs()));
-            }
-            navController.navigateUp();
+            ((App)getApplication()).getProductRepo()
+                    .productSave()
+                    .onNext(new ProductSave() {
+                        @Override
+                        public void done() {
+                            navController.navigateUp();
+                        }
+                        @Override
+                        public void alert(Bundle bundle) {
+                            navController.navigate(R.id.existNowDialog, bundle);
+                        }
+                    });
             return super.onOptionsItemSelected(item);
         } else  {
             return NavigationUI.onNavDestinationSelected(item, navController) || super.onOptionsItemSelected(item);

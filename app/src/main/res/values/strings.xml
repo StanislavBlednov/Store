@@ -7,4 +7,9 @@
     <string name="button_buy">Купить</string>
     <string name="product_name">Название</string>
     <string name="forward">Forward</string>
+    <string name="add">add</string>
+    <string name="subtract">subtract</string>
+    <string name="enter_number">Enter number</string>
+    <string name="add_menu">Add</string>
+    <string name="save_menu">Save</string>
 </resources>

@@ -30,6 +30,6 @@ public interface ProductDao {
     Maybe<Product> getProductById(long id);
     @Query("SELECT * FROM products")
     Single<List<Product>> getAllProducts();
-    @Query("SELECT * FROM products LIMIT 20 OFFSET :page")
+    @Query("SELECT * FROM products LIMIT 20 OFFSET :page * 20")
     Observable<List<Product>> getProductsFromPage(int page);
 }

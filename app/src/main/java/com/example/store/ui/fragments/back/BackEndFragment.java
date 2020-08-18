@@ -19,7 +19,8 @@ import com.example.store.db.Product;
 import com.example.store.utils.Click;
 
 public class BackEndFragment extends Fragment implements Click {
-    public static final String PRODUCT = "PRODUCT";
+    public static final String BACK_ITEM = "backItem";
+    public static final String PRODUCT = "product";
     private static final String POSITION = "BackEndFragment";
     private BackEndAdapter adapter;
     private LinearLayoutManager layoutManager;
@@ -35,7 +36,7 @@ public class BackEndFragment extends Fragment implements Click {
         if (getActivity() != null) {
             App app = (App) getActivity().getApplication();
 
-            adapter = new BackEndAdapter(app.getDb(), app.getLoader(), this);
+            adapter = new BackEndAdapter(app.getProductRepo(), app.getLoader(), this);
 
             layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
 
@@ -48,6 +49,9 @@ public class BackEndFragment extends Fragment implements Click {
 
             if (savedInstanceState != null) {
                 recyclerView.post(() -> layoutManager.scrollToPosition(savedInstanceState.getInt(POSITION)));
+            } else {
+                int item = app.getPreference().getInt(BACK_ITEM, 0);
+                recyclerView.post(() -> layoutManager.scrollToPosition(item));
             }
         }
 
@@ -60,6 +64,16 @@ public class BackEndFragment extends Fragment implements Click {
         if (layoutManager != null) {
             outState.putInt(POSITION, layoutManager.findLastCompletelyVisibleItemPosition());
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ((App)requireActivity().getApplication())
+                .getPreference()
+                .edit()
+                .putInt(BACK_ITEM, layoutManager.findLastCompletelyVisibleItemPosition())
+                .apply();
     }
 
     @Override
@@ -78,7 +92,7 @@ public class BackEndFragment extends Fragment implements Click {
         if (view != null) {
             Navigation
                     .findNavController(view)
-                    .navigate(R.id.action_backEndFragment_to_productDetailFragment, bundle);
+                    .navigate(R.id.backEndFragmentToEditProductFragment, bundle);
         }
     }
 }
